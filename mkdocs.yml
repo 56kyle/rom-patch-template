@@ -1,5 +1,20 @@
-
-site_name: RomPatchTemplate
-repo_url: https://github.com/youruser/rom-patch-template
+site_name: ROM Patch Template
+repo_url: https://github.com/56kyle/rompatch-template
+site_description: Documentation for the generic ROM patching template.
+theme:
+  name: material
+  features:
+    - navigation.top
+    - navigation.expand
 nav:
   - Home: index.md
+  - Getting Started: getting-started.md
+  - Toolchains:
+      - Genesis BPS: toolchains/genesis-bps.md
+  - Contributing: contributing.md
+markdown_extensions:
+  - admonition
+  - codehilite
+  - tables
+  - toc:
+      permalink: true

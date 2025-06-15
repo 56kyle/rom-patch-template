@@ -5,7 +5,7 @@
 *.bin
 
 # Mega Drive / Genesis family
-*.md
+# *.md needs to be more specific
 *.smd
 *.gen
 *.32x
