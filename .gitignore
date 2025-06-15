@@ -1,0 +1,79 @@
+# ------------------------------------------------------------------
+#  1. Binary ROM images   (cartridge / disk dumps)
+#     Covers Genesis, NES/SNES, GB/GBA, PC-Engine, N64, etc.
+# ------------------------------------------------------------------
+*.bin
+
+# Mega Drive / Genesis family
+*.md
+*.smd
+*.gen
+*.32x
+# Sega 8-bit
+*.sms
+*.gg
+# NES / Famicom Disk
+*.nes
+*.fds
+# SNES / Super Famicom
+*.sfc
+*.smc
+*.fig
+# Game Boy family
+*.gb
+*.gbc
+*.gba
+# PC-Engine / TG-16
+*.pce
+# Neo-Geo Pocket / Color
+*.ngp
+*.ngc
+# Nintendo 64
+*.n64
+*.v64
+*.z64
+# WonderSwan
+*.ws
+*.wsc
+# Nintendo 64
+*.rom
+*.d64
+*.atr
+*.tap
+
+# ------------------------------------------------------------------
+# 2. Generated patches & metadata
+# ------------------------------------------------------------------
+*.bps
+*.ips
+*.ups
+*.xdelta
+*.ppf
+*.aps
+patches/*.json
+
+# 3. Golden snapshots
+snapshots/
+
+# 4. Build artefacts from assemblers / compilers
+*.o
+*.obj
+*.elf
+*.axf
+*.map
+*.sym
+*.lst
+
+# Optional build folders
+/build/
+out/
+target/
+
+# 5. Documentation build output
+site/
+
+# 6. Python + Node caches
+__pycache__/
+*.py[cod]
+.mypy_cache/
+node_modules/
