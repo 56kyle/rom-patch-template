@@ -1,0 +1,31 @@
+# Nightly / on-change workflow that builds the devcontainer image and pushes it
+# to GitHub Container Registry so CI jobs can pull instead of building.
+
+name: Publish Dev Image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.devcontainer/**'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🔨 Build devcontainer image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/rompatch-dev:main \
+            -f .devcontainer/Dockerfile.dev .
+
+      - name: 🚀 Push image to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker push ghcr.io/${{ github.repository_owner }}/rompatch-dev:main

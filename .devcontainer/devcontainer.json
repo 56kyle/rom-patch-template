@@ -1,0 +1,27 @@
+{
+  "name": "RomPatchTemplate Dev",
+  "build": {
+    "dockerfile": "Dockerfile.dev"
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/python:1": {}
+  },
+
+  "postCreateCommand": [
+    "flips --version || true",
+    "just --list"
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.makefile-tools",
+        "mkdocs.mkdocs"
+      ]
+    }
+  },
+
+  "workspaceFolder": "/workspace"
+}

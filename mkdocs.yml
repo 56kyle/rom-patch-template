@@ -1,0 +1,5 @@
+
+site_name: RomPatchTemplate
+repo_url: https://github.com/youruser/rom-patch-template
+nav:
+  - Home: index.md

@@ -1,0 +1,87 @@
+# CI workflow: build container (or pull pre-built), run ROM pipeline, build docs,
+# upload patch & metadata, and (on main) deploy documentation.
+
+name: Build & Patch ROM + Docs
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-patch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+
+      # ----------  Docker image  ------------------------------------------------
+      - name: 🐳 Pull pre-built dev image (GHCR) if available
+        run: |
+          docker pull ghcr.io/${{ github.repository_owner }}/rompatch-dev:main || true
+
+      - name: 🐳 Build devcontainer image (fallback / cache refresh)
+        run: |
+          docker build -t rompatch-dev:ci \
+            --cache-from=ghcr.io/${{ github.repository_owner }}/rompatch-dev:main \
+            -f .devcontainer/Dockerfile.dev .
+
+      # ----------  Core pipeline  ----------------------------------------------
+      - name: 🔨 Run build / patch / check inside container
+        run: |
+          docker run --rm \
+            -u $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/work \
+            -w /work \
+            rompatch-dev:ci \
+            just build patch check
+
+      - name: 📄 Generate patch metadata JSON
+        run: |
+          docker run --rm -u $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/work -w /work \
+            rompatch-dev:ci \
+            ./scripts/generate-patch-json.sh ${{ github.ref_name }}
+
+      # ----------  Documentation  ----------------------------------------------
+      - name: 📘 MkDocs build (strict)
+        run: |
+          docker run --rm -u $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/work -w /work \
+            rompatch-dev:ci \
+            mkdocs build --strict
+
+      # ----------  Artifacts & release  ----------------------------------------
+      - name: 📦 Upload patch
+        uses: actions/upload-artifact@v4
+        with:
+          name: patch
+          path: ${{ env.PATCH_PATH }}
+
+      - name: 📦 Upload patch metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: patch-metadata
+          path: "${{ env.PATCH_PATH }}.json"
+
+      - name: 🚀 Attach assets to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ env.PATCH_PATH }}
+            ${{ env.PATCH_PATH }}.json
+
+      # ----------  Deploy docs  -------------------------------------------------
+      - name: 🌐 Deploy MkDocs to GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker run --rm -u $(id -u):$(id -g) \
+            -e GITHUB_TOKEN -v ${{ github.workspace }}:/work -w /work \
+            rompatch-dev:ci \
+            mkdocs gh-deploy --force --clean
