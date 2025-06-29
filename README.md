@@ -4,6 +4,11 @@ A modern, extensible template for developing ROM patches across cartridge-based 
 
 ---
 
+## WIP
+Just a heads up, this isn't currently working and was more of a spur of the moment thing.
+
+This has some interesting ideas but needs a lot of tlc before it is useful.
+
 ## 🚀 Features
 
 - 🧱 Modular toolchain support (e.g., Sega Genesis w/ BPS)
