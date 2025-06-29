@@ -2,18 +2,18 @@
 set dotenv-load := true
 
 build:
-    toolchains/${TOOLCHAIN}/pre.sh
-    toolchains/${TOOLCHAIN}/build.sh
-    toolchains/${TOOLCHAIN}/post.sh
+    toolchains/$TOOLCHAIN}/pre.sh
+    toolchains/$TOOLCHAIN}/build.sh
+    toolchains/$TOOLCHAIN}/post.sh
 
 patch:
-    flips --create {{ROM_INPUT_PATH}} {{ROM_OUTPUT_PATH}} {{PATCH_PATH}}
+    flips --create $ROM_INPUT_PATH $ROM_OUTPUT_PATH $PATCH_PATH
 
 check:
     # Verify snapshot or create one if missing
     scripts/snapshot-check.sh || scripts/snapshot-save.sh
     # Validate JSON metadata hashes
-    scripts/validate-patch-json.sh {{PATCH_PATH}}.json
+    scripts/validate-patch-json.sh $PATCH_PATH.json
 
 docs-build:
     mkdocs build --strict
